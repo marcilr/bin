@@ -1,0 +1,281 @@
+#!/bin/python2.7
+# -*- coding: iso-8859-15 -*-
+# resync
+# Created Fri Jan 15 15:35:35 AKST 2016
+# Copyright (C) 2016 by Raymond E. Marcil <marcilr@gmail.com>
+#
+# git config --global user.name "YOUR NAME"
+# git config --global user.email "YOUR EMAIL ADDRESS"
+#
+# git config user.name
+# Raymond Marcil
+#
+# git config user.email
+# marcilr@gmail.com
+#
+# 
+# Thu Dec 13 13:46:52 AST 2018
+# ============================                                                                                                                                                                                                                                         
+# Was getting resync execution error under windows 10 enterprise:
+#
+# ──────────────────────────────────────────────────────────────
+# > resync
+# C:\Users\remarcil\AppData\Local\Programs\Python\Python37\python.exe: can't open file '/drives/c/Users/remarcil/bin/resync': [Errno 2] No such file or directory
+# ──────────────────────────────────────────────────────────────
+# [2018-12-13 13:46.09]  ~/git
+# >
+#
+# Links
+# =====
+# Calling an external command in Python
+# http://stackoverflow.com/questions/89228/calling-an-external-command-in-python
+#
+# PEP 263 -- Defining Python Source Code Encodings
+# Set in header to alleviaet error:
+# resync
+# File "/drives/c/Users/remarcil/bin/resync", line 20
+# SyntaxError: Non-ASCII character '\xe2' in file /drives/c/Users/remarcil/bin/resync
+# on line 20, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details
+# https://www.python.org/dev/peps/pep-0263/
+#
+# GitPython
+# https://github.com/gitpython-developers/GitPython
+#
+# GitPython Documentation
+# http://gitpython.readthedocs.org/en/stable/
+#
+# How can I call 'git pull' from within Python?
+# http://stackoverflow.com/questions/15315573/how-can-i-call-git-pull-from-within-python
+#
+# Setting up Git
+# https://help.github.com/articles/set-up-git/
+#
+import os.path
+
+# Used by git() to call call
+import subprocess
+
+# Used by sys.exit() to exit with error.
+import sys
+
+# -------------------------------------------
+# Configuration
+# -------------------------------------------
+DEBUG = "true";
+#DEBUG = "false";
+
+
+#
+# List of manifests to check for configuration and manifests to clone sync.
+#
+# NOTE: Removed /home/marcilr/.manifest that did
+#       not exist on the SOA DOA DNR windows 10
+#       workstation with home directory of
+#       C:\Users\remarcil  Should update script
+#       ignore missing manifest entries.
+#
+manifests = ['manifest' ]
+
+
+# -------------------------------------------
+# Commands
+# -------------------------------------------
+git = "/usr/bin/git"
+
+
+# -------------------------------------------
+# Functions
+# -------------------------------------------
+
+#
+# debug()
+# str - String to print for DEBUG == 'true'
+#
+def debug( str ):
+  if DEBUG == 'true':
+      print(str)
+  return
+
+#
+# error()
+# str - String with error message to print
+#
+def error( str ):
+   sys.exit(str)
+   return
+
+#
+# process_cli_args()
+#
+def process_cli_args():
+    debug("process_cli_args()")
+
+    #debug("process_cli_args() This is the name of the script: ", sys.argv[0])
+    #debug("process_cli_args() Number of arguments: ", len(sys.argv))
+    #debug("process_cli_args() The arguments are: " , str(sys.argv))
+
+    return
+
+#
+# loop_over_manifest()
+# manifest - Path to manifest files to process
+# username - Global variable set with username if found
+# password - global variable set with password if found
+#
+def loop_over_manifest(manifest_file):
+    global manifest
+    global username
+    global password
+
+    debug("loop_over_manifest() Looping...")
+
+    for line in open(manifest_file, 'r'):
+        # Remove end whitespace
+        line = line.rstrip()
+
+        # Check if line (not blank) and not comment
+        if line and not line.startswith('#'):
+
+            debug("loop_over_manifest() line: %s" % line)
+
+            # Split line to list
+            manifest_list = line.split()
+            debug("loop_over_manifest() split line:")
+
+            src = manifest_list[0]
+            tar = manifest_list[1]
+
+            # Record username id found
+            if src == "username":
+                debug("loop_over_manifest() %s = %s " % (src, tar))
+                username = src
+
+            elif manifest_list[0] == "password":
+                debug("loop_over_manifest() %s = *** " % src)
+                password = tar
+
+            else:
+                new = [src,tar]
+                manifest.append(new)
+           
+        else:
+            debug("loop_over_manifest() skipping blank line or comment")
+
+        if not line: continue
+ 
+    return manifest
+
+
+#
+# get_manifest()
+# Get manifest from the manifests list of manifests.
+#
+def get_manifest():
+    debug( "get_manifest() processing: "
+        + str(len(manifests)) + ' manifests')
+
+    for idx, file in enumerate(manifests):
+        if os.path.isfile(file):
+            message = "get_manifest() %d, %s" % (idx, file)
+            debug(message)
+            loop_over_manifest(file)
+        else:
+            message = "get_manifest() No %s found, aborting." % file
+            error(message)
+     
+    return
+
+#
+# process_manifest()
+#
+# Progress manifest array of manifests.
+# Uses ssh with crypto keys to alleviate password issues with https.
+#
+# Uses:
+#   manifest - array of repos to sync
+#
+def process_manifest():
+
+    # Report manifest array length
+    debug("main() manifest array length: %d" % len(manifest))
+
+    # Loop over repos in manifest array
+    for repo in manifest:
+        src = repo[0]
+        tar = repo[1]
+
+        debug("process_manifest() src repo: %s" % src)
+        debug("process_manifest() tar repo: %s" % tar)
+
+        #
+        # If the repo does exists than update it with pull
+        # Alleviate conflicts (to be resolved) with git stash
+        #
+        if os.path.exists(tar):
+            debug("process_manifest() %s repo found, updating..." % tar)
+            debug("process_manifest() executing: git -C %s" % tar)
+
+            #
+            # Calling an external command in Python
+            # http://stackoverflow.com/questions/89228/calling-an-external-command-in-python
+            #
+            from subprocess import call
+            call([git, "-C", tar, "pull"])
+ 
+            debug("process_manifest() updated %s repo" % tar)
+
+        #
+        # If repo does not exist clone it.
+        #
+        # $ git clone ssh://git@github.com/marcilr/git-github.git github
+        # Cloning into 'github'...
+        # remote: Counting objects: 23, done.
+        # remote: Compressing objects: 100% (17/17), done.
+        # remote: Total 23 (delta 7), reused 17 (delta 4), pack-reused 0
+        # Receiving objects: 100% (23/23), done.
+        # Resolving deltas: 100% (7/7), done.
+        # Checking connectivity... done.
+        # $
+        #
+        # NOTE: Using crypto keys alleviates the password prompt generated by
+        #       https.  This does require a coupld of keys under ~/.ssh:
+        #         rsa4096_github_nopassphrase
+        #         rsa4096_github_nopassphrase.pub
+        #
+        #       github.com is then configued with the public key for crypto
+        #       authentication. 
+        #
+        else:   
+            debug("process_manifest() %s repo not found, cloning..." % tar);
+
+            debug("process_manifest() executing: ")
+            debug("  git clone %s %s" % (src, tar));
+
+            #
+            # Calling an external command in Python
+            # http://stackoverflow.com/questions/89228/calling-an-external-command-in-python
+            #
+            from subprocess import call
+            
+            # This works:
+            #call(["/usr/bin/git", "clone", "ssh://git@github.com/marcilr/git-github.git", "github"])
+            call([git, "clone", src, tar])
+
+    return
+
+
+# -------------------------------------------
+# Main
+# -------------------------------------------
+manifest = []
+username = ""
+password = ""
+
+# Process command line arguments
+process_cli_args()
+
+# Get manifest from manifest in working directory
+get_manifest()
+
+# Process manifest array
+process_manifest()
