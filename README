@@ -1,0 +1,34 @@
+README
+Created Thu Dec 13 11:25:30 AST 2018
+by Raymond E. Marcil <ray.marcil@alaska.gov>
+
+
+
+Filelist
+========
+create
+  Script to create file from cli.
+  From github repo:
+  $ git clone ssh://git@github.com/marcilr/create.git create
+
+manifest
+  Manifest of repositories to check out
+
+resync
+  Script to checkout all directories listed in manifest file
+  in current working directory.
+  $ git clone ssh://git@github.com/marcilr/resync.git resync
+
+python
+  Symlink to python2.7.exe:
+  python -> ../Documents/MobaXterm/slash/bin/python2.7.exe
+  Nuked as:
+  $ type type
+  type is a shell builtin
+  $
+  $ python --version
+  Python 2.7.13
+  $
+
+rmtil
+  Script to remove ~ files
