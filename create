@@ -1,135 +1,240 @@
-
-#!/bin/bash
-# create
-# Created Wed, Nov 28, 2018  9:15:39 AM
-# by Raymond E. Marcil <marcilr@gmail.com>
-# 
-# 
-# Script to create file with filename, author, and creation date
+#!/bin/sh
+# Created Fri Mar 23 09:16:50 AKDT 2012
+# Copyright (C) 2012 by Raymond E. Marcil <marcilr@gmail.com>
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
 #
-# If in Alaska State DNR git repostory, with "dnratwtfsp" in
-# repo URI set email in header to ray.marcil@alaska.gov"
+# Script to generate text file with standard header:
+#   Created DDD MMM DD HH:MM:SS AKST YYYY
+#   Copyright (C) YYYY by Raymond E. Marcil <marcilr@gmail.com>
+#
+# Usage: create [OPTION]... [FILE]
+# Options:
+#   -d | --debug     Enable debuggging
+#   -v | --version   Display version
+#   -h | --help      Display help
+# [FILE]           Optional text file to create.  Defaults to README
 #
 #
 # Links
 # =====
-# Detect if executable file is on user's PATH
-# https://stackoverflow.com/questions/6569478/detect-if-executable-file-is-on-users-path
+# Advanced Bash-Scripting Guide
+# An in-depth exploration of the art of shell scripting
+# Mendel Cooper <thegrendel.abs@gmail.com>
 #
-
-# Configuration
-AUTHOR="Raymond E. Marcil"
-
-# Default to public email address
-EMAIL="marcilr@gmail.com"
-
-
-# Get current date for create date
-DATE=`date`
+# How do I prompt for input in a Linux shell script?
+# http://stackoverflow.com/questions/226703/how-do-i-prompt-for-input-in-a-linux-shell-script
+#
+VERSION="0.0.1"
 
 #
-# Enable/disable debugging
-# Set 1 or higher for debugging output
+# Default target to create if not specified on command line.
 #
-DEBUG=0
+TARGET=README
 
+# Disabling debugging by default
+DEBUG=-1
 
-# Functions
+# Binaries
+DATE=/bin/date
+EXPR=/usr/bin/expr
+TR=/usr/bin/tr
+
+# Get datestamp.
+DATESTAMP=`${DATE}`
+
+YEAR=`${DATE} +%Y`
+
+# Get arguments
+ARGS=$@
+
+# Get number of arguments
+NUMARGS=$#
 
 #
-# debug() 
+# Display usage.
 #
-debug() {
-  if [ "${DEBUG}" != "0" ]; then
-    echo "debug() ${1}"
-  fi
-
+usage(){
+  echo "Usage: create [OPTION]... [FILE]"
+  echo "Options:"
+  echo "  -d | --debug     Enable debuggging"
+  echo "  -v | --version   Display version"
+  echo "  -h | --help      Display help"
+  echo "  [FILE]           Optional text file to create.  Defaults to README."
+  exit 0
 }
 
 
 #
-# getEmail()
+# Display version
 #
-# If dnratwtfsp git server, in git URL,
-# then set email to ray.marcil@alaska.gov
-#
-getEmail() {
-
-    debug "getEmail() *** START ***"
-    debug "getEmail() EMAIL=${EMAIL}"
-
-    #
-    # Test if git available
-    # /usr/bin/git - debian
-    # /bin/git     - windows 10
-    #
-    if [ -x "/usr/bin/git" ] || [ -x "/bin/git" ]; then
-        debug "getEmail() Found git!"
-
-        # Get string with source repository
-        REPO=`git remote -v`
-
-        debug "getEmail: REPO=${REPO}"
-
-        #
-        # If repo host is "dnratwtfsp" set
-        # set Alaska state email address.
-        #
-        if [[ $REPO == *"dnratwtfsp"* ]]; then
-            EMAIL="ray.marcil@alaska.gov"
-        fi
-
-   else
-     debug "getEmail() Git not found...."
-   fi
-
-   debug "getEmail() EMAIL=${EMAIL}"
-   debug "getEmail() *** END ***"
-
-}  # end getEmail()
-
-
-# ==========================================
-# Main
-# ==========================================
-
-debug "MAIN *** START ***"
-
-# Get email address based on repository url
-getEmail
-
-debug "EMAIL: ${EMAIL}"
-
-# If no command line argument report usage and exit 
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <file>" >&2
-  exit 1
-fi
+version(){
+  echo "create v${VERSION}"
+  echo "Created Fri Mar 23 09:16:50 AKDT 2012"
+  echo "Copyright (C) 2012 by Raymond E. Marcil <marcilr@gmail.com>"
+  echo "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+  echo "This is free software: you are free to change and redistribute it."
+  echo "There is NO WARRANTY, to the extent permitted by law."
+  exit 0
+}
 
 #
-# If command line argument then create file with filename,
-# author, and creation date in header
+# Logging function.
+# Will echo MESSAGE if DEBUG>0
 #
-if ! [ -e "$1" ]; then
-  echo ${1} >> ${1}
-  echo "Created ${DATE}" >> ${1}
-  echo "by ${AUTHOR} <${EMAIL}>" >> ${1}
+log(){
+  if [ "${DEBUG}" -gt "0" ]; then
+    echo ${MESSAGE}
+  fi
+}
 
-  # If file created exit successfully
-  if [ -f ${1} ]; then
-    debug "MAIN: Created: ${1}"
-    debug "MAIN: *** END ***"
-    exit 0
+
+#
+# Non-case sensitive cli argument processing.
+# input:  ARG - Argument to process.
+# output: Processes argument.
+#
+# NOTE: Only process "-f" or "--foo" style arguments.
+#       Does not process "-b baz" 2-value arguments.
+#
+# FIXME: Proper gnu language to describe "-b baz" 2-value arguments?
+#
+processArgument(){
+
+  # Convert argument to all lower case for processing.
+  ARG=`echo ${ARG} | ${TR} '[:upper:]' '[:lower:]'` 
+
+  #
+  # Use of ${1} does not work here.
+  #
+  case "${ARG}" in
+    -d|--debug)
+               # "-d" or "--debug" parameter?
+               DEBUG=1
+	               ;;
+    -h|--help)
+              usage
+              ;;
+    -v|--version)
+              version
+              ;;
+    *)
+              usage
+              ;;
+  esac
+  MESSAGE="processArgument(${ARG})" && log
+}
+
+#
+# createFile()
+# Create file with standard header and copyright.
+# input:  FILE
+# output: Creates FILE with standard header and copyright.
+#
+createFile(){
+  #
+  # Assume file exists and should not be created.
+  #
+  FLAG=false
+
+  MESSAGE="createFile(${1})" && log
+
+
+  #
+  # Check if target file exists.
+  #
+  if [ -e ${FILE} ]; then
+
+    while true; do
+      #
+      # Query whether to overwrite existing file.
+      #
+      read -p "Target ${FILE} exists, overwrite? [n] " yn
+      case $yn in
+        [Yy]* )
+               # Set flag for file to be created.
+               FLAG=true
+               break
+               ;;
+        * )    break
+               ;;
+      esac
+    done
+
   else
-    echo "Failed to create ${1}"
+    MESSAGE="${FILE} does not exist." && log
+
+    # Set flag for file to be created.
+    FLAG=true
   fi
 
+  if [ ${FLAG} = "true" ]; then
+
+    #
+    # Create file.
+    #
+    echo ${FILE} > ${FILE}
+    echo "Created ${DATESTAMP}" >> ${FILE}
+    echo "Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>" >> ${FILE}
+
+    MESSAGE="Created: ${FILE}" && log
+  fi
+}
+
+
+#
+# Process cli parameters.
+#
+while [ $# -gt 0 ]; do
+  FIRSTCHAR=`${EXPR} substr "${1}" 1 1`
+
+  #
+  # Check if this parameter begins with "-" dash.
+  # YES - Process with processArgument.
+  # NO  - Must be FILE target parameter.
+  #
+  if [ ${FIRSTCHAR} = '-' ]; then
+    #
+    # Pass cli parameter to processArgument.
+    #
+    ARG=${1}
+    processArgument
+  else
+    #
+    # Added parameter to target.
+    # Yes - multiple targets are supported.
+    #
+    ARG=${1}
+    TARGET2="${TARGET2} ${ARG}"
+  fi
+
+  shift       # Check next set of parameters.
+done
+
+
+#
+# Report number of command line arguments.
+#
+MESSAGE="Number arguments: ${NUMARGS}" && log
+
+#
+# If target parameter(s) passed via clie set target to it.
+#
+if [ -n "${TARGET2}" ]; then
+  TARGET=${TARGET2}
 fi
 
-# If file exists report and exit
-echo "${1} exists, aborting."
+#
+# Report target.
+#
+MESSAGE="Target: ${TARGET}" && log
 
-debug "MAIN *** END ***"
+#
+# Loop over target file(s).
+#
+for FILE in ${TARGET}; do
+  createFile ${FILE}
+done
 
-exit 1
-
+exit 0
