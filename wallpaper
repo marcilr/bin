@@ -12,6 +12,10 @@
 #
 # Links
 # =====
+# Returning Values from Bash Functions
+# by Mitch Frazier on September 11, 2009
+# https://www.linuxjournal.com/content/return-values-bash-functions
+#
 # set the desktop wallpaper under Xfce4
 # https://ubuntuincident.wordpress.com/2015/03/08/set-the-desktop-wallpaper-under-xfce4/
 #
@@ -77,7 +81,7 @@ random() {
 debug "MAIN *** start ***"
 
 random
-
+echo "FILEZ: ${FILE}"
 
 #
 # Loop over list of properties to set to
@@ -85,7 +89,8 @@ random
 #
 ${XFCONFQUERY} -c xfce4-desktop -l | ${GREP} "last-image$" | while read LASTIMAGE; do
   debug "MAIN LASTIMAGE: ${LASTIMAGE}"
+  debug "MAIN FILE: ${FILE}"
+#  ${XFCONFQUERY} -c xfce4-desktop -p ${LASTIMAGE} ${FILE}
 done
 
 debug "MAIN *** end ***"
-
