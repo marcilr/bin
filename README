@@ -8,8 +8,8 @@ Filelist
 ========
 create
   Script to create file from cli.
-  From github repo:
-  $ git clone ssh://git@github.com/marcilr/create.git create
+  copied from:
+    malachite:/home/marcilr/bin/create
 
 manifest
   Manifest of repositories to check out
