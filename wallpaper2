@@ -1,0 +1,93 @@
+# wallpaper2
+# Created Fri Feb  8 07:14:33 AKST 2019
+# Copyright (C) 2019 by Raymond E. Marcil <marcilr@gmail.com>
+#
+# Set wallpaper
+#
+# Links
+# =====
+# set the desktop wallpaper under Xfce4
+# https://ubuntuincident.wordpress.com/2015/03/08/set-the-desktop-wallpaper-under-xfce4/
+#
+
+
+# =============
+# Configuration
+# =============
+
+#
+# Enable debugging by assigning DEBUG to any value
+# i.e. To display just comment out DEBUG.
+#
+DEBUG=true
+
+
+# Wallpaper images
+WALLPAPERDIR=/usr/local/wallpaper
+
+# Binaries
+LS=/bin/ls
+SHUF=/usr/bin/shuf
+SORT=/usr/bin/sort
+TAIL=/usr/bin/tail
+
+
+# =========
+# Functions
+# =========
+
+
+#
+# debug()
+#
+debug() {
+  [[ ! -z "${DEBUG}" ]] && echo "debug() ${1}"
+}
+
+
+#
+# random()
+# Get a random image for the WALLPAPERDIR directory
+#
+random() {
+
+  #debug "random() start"
+
+  #
+  # NOTE: Could update ls to find below for recursive operation
+  #       on wallpaper directory.
+  #
+  #${LS} ${WALLPAPERDIR}/*.{gif,jpg,jpeg,png} | ${SORT} -R | ${TAIL} -$N | while read FILE; do
+  #  debug "random() FILE: ${FILE}"
+  #done
+  
+  FILE=`${LS} ${WALLPAPERDIR} | ${SHUF} | ${TAIL} --lines=1`
+
+  debug "random() FILE: ${FILE}"
+  #debug "random() end"
+
+}
+
+
+# =========
+# Main
+# =========
+
+debug "main: *** START ***"
+
+
+# Query all properties that end with “last-image“:
+xfconf-query -c xfce4-desktop -l | grep "last-image$" | while read IMAGE; do
+  debug "main: IMAGE: $IMAGE"
+
+  # Get random image
+  random
+
+  debug "main: FILE: ${FILE}"
+
+  # Set each image value to wallpaper image
+  debug "main: executing: xfconf-query -c xfce4-desktop -p ${IMAGE} -s ${FILE}"
+  xfconf-query -c xfce4-desktop -p ${IMAGE} -s ${FILE}
+
+done
+
