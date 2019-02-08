@@ -1,0 +1,24 @@
+wallpaper.txt
+Created Fri Jan 12 14:34:56 AKST 2018
+Copyright (C) 2018 by Raymond E. Marcil <marcilr@gmail.com>
+
+
+This works to set single image on 1st display:
+  xfconf-query --channel xfce4-desktop --property
+  /backdrop/screen0/monitor0/workspace0/last-image
+  --set /home/marcilr/bin/wallpaper-single/Xfce-4-12-Has-Been-Officially-Released-474540-2.jpg
+
+This works to set the combined image across all displays:
+  xfconf-query --channel xfce4-desktop --property
+  /backdrop/screen0/monitor0/workspace0/last-image
+  --set /tmp/wallpaper/wallpaper.jpg 
+
+This no longer works:
+  xfconf-query --channel xfce4-desktop
+  --property /backdrop/screen0/monitor0/image-path
+  --set /path/to/img.jpg
+
+From:
+  Not changing wallpaper on XFCE #25
+  dabluecaboose opened this issue on Apr 10, 2017 · 5 comments
+  https://github.com/dylanaraps/wal/issues/25
