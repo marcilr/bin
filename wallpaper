@@ -5,6 +5,12 @@
 #
 # Script to set backfground wallpaper under Xfce v4.12
 #
+# TODO:
+# +++ Fri Feb  8 07:57:59 AKST 2019 - Would be good if the
+#     script looped over all potential desktops and set
+#     different wallpaper on each.
+#
+#
 # $ xfce4-panel --version
 # xfce4-panel 4.12.1 (Xfce 4.12)
 # ...
