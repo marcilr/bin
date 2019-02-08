@@ -10,6 +10,37 @@
 # ...
 # $
 #
+# "Again, the default Xfce wallpaper is not bad at all.
+# But you can change the wallpaper to something that matches
+# with your icons and themes.
+#
+# To change wallpapers in Xfce, right click on the desktop
+# and click on Desktop Settings. You can change the desktop
+# background from your custom collection or the defaults
+# one given.
+#
+# Right click on the desktop and click on Desktop Settings.
+# Choose Background from the folder option, and choose any
+# one of the default backgrounds or a custom one."
+# --4 Ways You Can Make Xfce Look Modern and Beautiful
+#   Last updated July 25, 2018 By Ambarish Kumar 35 Comments
+#   https://itsfoss.com/customize-xfce/
+#
+#
+# Fri Feb  8 07:47:32 AKST 2019
+# =============================
+# Updated and got this script operational for Xfce 4.12
+# Under Debian Stretch 9.7 amd64  running under VirtualBox.
+#
+# Initially anually set the wallpaper as described above.
+# Migrated wallaper library to Xfce's standard
+# /usr/share/backgrounds/ location:
+#
+# cd /usr/share
+# mv backgrounds/ backgrounds-ORIG-20190208
+# ln -s /usr/local/wallpaper /usr/share/backgrounds
+#
+#
 # Links
 # =====
 # Returning Values from Bash Functions
@@ -68,7 +99,7 @@ random() {
   #${LS} ${WALLPAPERDIR}/*.{gif,jpg,jpeg,png} | ${SORT} -R | ${TAIL} -$N | while read FILE; do
   #  debug "random() FILE: ${FILE}"
   #done
-  
+
   FILE=`${LS} ${WALLPAPERDIR} | ${SHUF} | ${TAIL} --lines=1`
 
   debug "random() FILE: ${FILE}"
@@ -95,7 +126,7 @@ xfconf-query -c xfce4-desktop -l | grep "last-image$" | while read IMAGE; do
 
   # Set each image value to wallpaper image
   debug "main: executing: xfconf-query -c xfce4-desktop -p ${IMAGE} -s ${FILE}"
-  xfconf-query -c xfce4-desktop -p ${IMAGE} -s ${FILE}
+  xfconf-query -c xfce4-desktop -p ${IMAGE} -s ${WALLPAPERDIR}/${FILE}
 
 done
 
