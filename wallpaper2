@@ -1,15 +1,24 @@
+#!/bin/bash
 # wallpaper2
 # Created Fri Feb  8 07:14:33 AKST 2019
 # Copyright (C) 2019 by Raymond E. Marcil <marcilr@gmail.com>
 #
-# Set wallpaper
+# Script to set backfground wallpaper under Xfce v4.12
+#
+# $ xfce4-panel --version
+# xfce4-panel 4.12.1 (Xfce 4.12)
+# ...
+# $
 #
 # Links
 # =====
+# Returning Values from Bash Functions
+# by Mitch Frazier on September 11, 2009
+# https://www.linuxjournal.com/content/return-values-bash-functions
+#
 # set the desktop wallpaper under Xfce4
 # https://ubuntuincident.wordpress.com/2015/03/08/set-the-desktop-wallpaper-under-xfce4/
 #
-
 
 # =============
 # Configuration
@@ -21,9 +30,8 @@
 #
 DEBUG=true
 
-
-# Wallpaper images
-WALLPAPERDIR=/usr/local/wallpaper
+# Directory with wallpaper to randomly select and set
+WALLPAPERDIR=~/.wallpaper
 
 # Binaries
 LS=/bin/ls
