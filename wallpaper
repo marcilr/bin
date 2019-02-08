@@ -31,7 +31,7 @@
 DEBUG=true
 
 # Directory with wallpaper to randomly select and set
-WALLPAPERDIR=~/.wallpaper
+WALLPAPERDIR=/usr/local/wallpaper
 
 
 # ========
