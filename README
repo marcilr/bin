@@ -36,5 +36,8 @@ rmtil
 wallpaper
   Script to set backfground wallpaper under Xfce
 
-x
   Set x screen size with xrandr
+
+wallpaper.txt
+  Notes on setting wallpaper
+
