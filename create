@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Created Fri Mar 23 09:16:50 AKDT 2012
 # Last updated: Tue Aug 13 09:38:14 AKDT 2019
 # Copyright (C) 2012-2019 by Raymond E. Marcil <marcilr@gmail.com>
@@ -9,6 +9,10 @@
 # Script to generate text file with standard header:
 #   Created DDD MMM DD HH:MM:SS AKST YYYY
 #   Copyright (C) YYYY by Raymond E. Marcil <marcilr@gmail.com>
+#
+# If current working directory is State of Alaska OIT DNR:
+#   Created DDD MMM DD HH:MM:SS AKST YYYY
+#   by Raymond E. Marcil <ray.marcil@alaska.gov>
 #
 # Usage: create [OPTION]... [FILE]
 # Options:
@@ -199,10 +203,25 @@ createFile(){
     echo "Created ${DATESTAMP}" >> ${FILE}
 
     #
-    # Set default copyright for 'marcilr' in repo url or unknown
+    # Set default copyright for 'marcilr' in repo url or if unknown
     #
     COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>"
 
+    # =========================================
+    # If State of Alaska OIT DNR git repository
+    # set COPYRIGHT accordingly
+    # =========================================
+    if [ -d .git ]; then
+        # Get repository url from current workng directory
+        REPOURL=`${GIT} remote -v`
+
+        # Check if DNR tfsp git repo
+        if [[ $REPOURL == *"dnratwtfsp"* ]]; then
+            COPYRIGHT="by Raymond E. Marcil <ray.marcil@alaska.gov>"
+        fi
+    fi
+
+    # Write copyright to file
     echo ${COPYRIGHT} >> ${FILE}
 
     MESSAGE="Created: ${FILE}" && log
