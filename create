@@ -1,6 +1,7 @@
 #!/bin/sh
 # Created Fri Mar 23 09:16:50 AKDT 2012
-# Copyright (C) 2012 by Raymond E. Marcil <marcilr@gmail.com>
+# Last updated: Tue Aug 13 09:38:14 AKDT 2019
+# Copyright (C) 2012-2019 by Raymond E. Marcil <marcilr@gmail.com>
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
@@ -16,6 +17,19 @@
 #   -h | --help      Display help
 # [FILE]           Optional text file to create.  Defaults to README
 #
+# Tue Aug 13 09:38:14 AKDT 2019
+# =============================
+# Updated to set header based up git repo source determined with:
+#   git remote -v
+#
+# If repo url contains 'dnratwtfsp' for SOA OIT DNR then
+# the 2nd line of the header will be:
+#   "by Raymond E. Marcil <ray.marcil@alaska.gov>
+#
+# If the repo url contains 'marcilr' or is inidentified
+# then the 2nd line of the header is set to:
+#   "Copyright (C) 2019 by Raymond E. Marcil <marcilr@gmail.com>"
+#
 #
 # Links
 # =====
@@ -26,6 +40,10 @@
 # How do I prompt for input in a Linux shell script?
 # http://stackoverflow.com/questions/226703/how-do-i-prompt-for-input-in-a-linux-shell-script
 #
+
+# =============
+# Configuration
+# =============
 VERSION="0.0.1"
 
 #
@@ -36,9 +54,12 @@ TARGET=README
 # Disabling debugging by default
 DEBUG=-1
 
+# ========
 # Binaries
+# ========
 DATE=/bin/date
 EXPR=/usr/bin/expr
+GIT=/usr/bin/git
 TR=/usr/bin/tr
 
 # Get datestamp.
@@ -103,7 +124,7 @@ log(){
 processArgument(){
 
   # Convert argument to all lower case for processing.
-  ARG=`echo ${ARG} | ${TR} '[:upper:]' '[:lower:]'` 
+  ARG=`echo ${ARG} | ${TR} '[:upper:]' '[:lower:]'`
 
   #
   # Use of ${1} does not work here.
@@ -176,7 +197,13 @@ createFile(){
     #
     echo ${FILE} > ${FILE}
     echo "Created ${DATESTAMP}" >> ${FILE}
-    echo "Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>" >> ${FILE}
+
+    #
+    # Set default copyright for 'marcilr' in repo url or unknown
+    #
+    COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>"
+
+    echo ${COPYRIGHT} >> ${FILE}
 
     MESSAGE="Created: ${FILE}" && log
   fi
