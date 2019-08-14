@@ -202,9 +202,7 @@ createFile(){
     echo ${FILE} > ${FILE}
     echo "Created ${DATESTAMP}" >> ${FILE}
 
-    #
-    # Set default copyright for 'marcilr' in repo url or if unknown
-    #
+    # Set default copyright to 'marcilr'
     COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>"
 
     # =========================================
@@ -212,12 +210,20 @@ createFile(){
     # set COPYRIGHT accordingly
     # =========================================
     if [ -d .git ]; then
+
         # Get repository url from current workng directory
         REPOURL=`${GIT} remote -v`
 
-        # Check if DNR tfsp git repo
+        # Check if DNR "dnratwtfsp" git repo
         if [[ $REPOURL == *"dnratwtfsp"* ]]; then
+            MESSAGE="In dnratwtfsp git repo" && log
             COPYRIGHT="by Raymond E. Marcil <ray.marcil@alaska.gov>"
+        fi
+
+        # Check if "marcilr" git repo
+        if [[ $REPOURL == *"marcilr"* ]]; then
+            MESSAGE="In marcilr git repo" && log
+            COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>"
         fi
     fi
 
