@@ -41,6 +41,9 @@
 # An in-depth exploration of the art of shell scripting
 # Mendel Cooper <thegrendel.abs@gmail.com>
 #
+# BASH If String Contains in case Statement
+# https://stackoverflow.com/questions/22712156/bash-if-string-contains-in-case-statement
+#
 # How do I prompt for input in a Linux shell script?
 # http://stackoverflow.com/questions/226703/how-do-i-prompt-for-input-in-a-linux-shell-script
 #
