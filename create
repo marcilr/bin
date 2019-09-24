@@ -80,6 +80,10 @@ ARGS=$@
 # Get number of arguments
 NUMARGS=$#
 
+# =========
+# Functions
+# =========
+
 #
 # Display usage.
 #
@@ -152,7 +156,8 @@ processArgument(){
               ;;
   esac
   MESSAGE="processArgument(${ARG})" && log
-}
+}   # End processArgument()
+
 
 #
 # createFile()
@@ -191,7 +196,7 @@ createFile(){
     done
 
   else
-    MESSAGE="${FILE} does not exist." && log
+    MESSAGE="createFile() ${FILE} does not exist." && log
 
     # Set flag for file to be created.
     FLAG=true
@@ -210,7 +215,8 @@ createFile(){
 
     # Check if git exists
     if hash git 2>/dev/null; then
-        echo "Found git"
+        MESSAGE="processArgument(): git found" && log
+
         # Get repository url from current workng directory
         REPOURL=`${GIT} remote -v`
 
@@ -221,7 +227,7 @@ createFile(){
         case $REPOURL in
            # State of Alaska OIT DNR git repo
            *"dnratwtfsp"*)
-               MESSAGE="In dnratwtfsp git repo" && log
+               MESSAGE="createFile() In dnratwtfsp git repo" && log
                COPYRIGHT="by Raymond E. Marcil <ray.marcil@alaska.gov>";;
            # marcilr git repo
            *"marcilr"*)
@@ -233,15 +239,14 @@ createFile(){
            #    COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>";;
         esac
     else
-        echo "No git found"
+        MESSAGE="processArgument(): git not found" && log
     fi   # End if hash git 2>/dev/null; then
 
     # Write copyright to file
     echo ${COPYRIGHT} >> ${FILE}
 
-    MESSAGE="Created: ${FILE}" && log
+    MESSAGE="createFile() Created: ${FILE}" && log
   fi   # End if [ ${FLAG} = "true" ]; then
-
 }   # End createFile()
 
 
@@ -278,7 +283,7 @@ done
 #
 # Report number of command line arguments.
 #
-MESSAGE="Number arguments: ${NUMARGS}" && log
+MESSAGE="createFile() Number arguments: ${NUMARGS}" && log
 
 #
 # If target parameter(s) passed via clie set target to it.
@@ -290,7 +295,7 @@ fi
 #
 # Report target.
 #
-MESSAGE="Target: ${TARGET}" && log
+MESSAGE="createFile() TARGET: ${TARGET}" && log
 
 #
 # Loop over target file(s).
