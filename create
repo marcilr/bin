@@ -16,7 +16,7 @@
 #
 # Usage: create [OPTION]... [FILE]
 # Options:
-#   -d | --debug     Enable debuggging
+#   -d | --debug     Enable debugging
 #   -v | --version   Display version
 #   -h | --help      Display help
 # [FILE]           Optional text file to create.  Defaults to README
@@ -208,15 +208,16 @@ createFile(){
     # Set default copyright to 'marcilr'
     COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>"
 
-    # =========================================
-    # If State of Alaska OIT DNR git repository
-    # set COPYRIGHT accordingly
-    # =========================================
-    if [ -d .git ]; then
-
+    # Check if git exists
+    if hash git 2>/dev/null; then
+        echo "Found git"
         # Get repository url from current workng directory
         REPOURL=`${GIT} remote -v`
 
+        # =========================================
+        # If State of Alaska OIT DNR git repository
+        # don't set copyright.
+        # =========================================
         case $REPOURL in
            # State of Alaska OIT DNR git repo
            *"dnratwtfsp"*)
@@ -226,19 +227,22 @@ createFile(){
            *"marcilr"*)
                MESSAGE="In marcilr git repo" && log
                COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>";;
-           # Unrecognized git repo
-           *)
-               MESSAGE="Unrecognized git repo" && log
-               COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>";;
+           # Unrecognized git repo use default copyright
+           #*)
+           #    MESSAGE="Unrecognized git repo" && log
+           #    COPYRIGHT="Copyright (C) ${YEAR} by Raymond E. Marcil <marcilr@gmail.com>";;
         esac
-    fi
+    else
+        echo "No git found"
+    fi   # End if hash git 2>/dev/null; then
 
     # Write copyright to file
     echo ${COPYRIGHT} >> ${FILE}
 
     MESSAGE="Created: ${FILE}" && log
-  fi
-}
+  fi   # End if [ ${FLAG} = "true" ]; then
+
+}   # End createFile()
 
 
 #
