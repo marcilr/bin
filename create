@@ -21,6 +21,14 @@
 #   -h | --help      Display help
 # [FILE]           Optional text file to create.  Defaults to README
 #
+#
+# Tue Sep 24 13:47:44 AKDT 2019
+# =============================
+# o Updated for setting copyright when not in git repos
+# o Prefixed debugging output with function()
+# o Updated version from 0.0.1 to 0.0.2
+# o Added "Last updated: " to --version output
+#
 # Tue Aug 13 09:38:14 AKDT 2019
 # =============================
 # Updated to set header based up git repo source determined with:
@@ -51,7 +59,7 @@
 # =============
 # Configuration
 # =============
-VERSION="0.0.1"
+VERSION="0.0.2"
 
 #
 # Default target to create if not specified on command line.
@@ -95,7 +103,7 @@ usage(){
   echo "  -h | --help      Display help"
   echo "  [FILE]           Optional text file to create.  Defaults to README."
   exit 0
-}
+}   # End usage()
 
 
 #
@@ -104,12 +112,13 @@ usage(){
 version(){
   echo "create v${VERSION}"
   echo "Created Fri Mar 23 09:16:50 AKDT 2012"
-  echo "Copyright (C) 2012 by Raymond E. Marcil <marcilr@gmail.com>"
+  echo "Last updated: Tue Sep 24 13:45:46 AKDT 2019"
+  echo "Copyright (C) 2012-2019 by Raymond E. Marcil <marcilr@gmail.com>"
   echo "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
   echo "This is free software: you are free to change and redistribute it."
   echo "There is NO WARRANTY, to the extent permitted by law."
   exit 0
-}
+}   # End version()
 
 #
 # Logging function.
